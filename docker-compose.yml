@@ -8,5 +8,5 @@ services:
     environment:
       - POSTGRES_PASSWORD=password
       - CONSTRAINTS=false
-    volumes:
-      - ./vocab:/VOCAB
+    # volumes:
+    #   - ./empty:/VOCAB
