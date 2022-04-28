@@ -18,6 +18,17 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
     \i /scripts/OMOPCDM_postgresql_5.4_ddl.sql
 EOSQL
 fi
-    #  \i /scripts/OMOPCDM_postgresql_5.4_primary_keys.sql
-    #  \i /scripts/OMOPCDM_postgresql_5.4_constraints.sql  NOTE: Causes error.
-    #  \i /scripts/OMOPCDM_postgresql_5.4_indices.sql
+
+PATH_TO_VOCAB=/VOCAB
+if [[ -d $PATH_TO_VOCAB ]]; then
+if [[ "$(ls -A $DIR)" ]]; then
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
+    \c omop54
+    \i /scripts/load_vocabulary.sql
+EOSQL
+else
+echo "Vocabulary Folder is Empty."
+fi
+else
+echo "Vocabulary Folder Not Found. If this is not expected, ensure that you have your local folder mounted properly and re-run the image."
+fi
