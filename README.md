@@ -2,7 +2,7 @@
 
 This repository hosts the files needed to build an OMOP Common Data Model database using version 5.4 and PostgreSQL. This image is a simple build intended to support SmartChartSuite applications but may be used more generally.
 
-This database does not come pre-loaded with Athena Vocabulary.
+This database does not come pre-loaded with Athena Vocabulary, but a volume containing vocabulary may be mounted into the container and loaded at run time.
 
 ## Environment Variables and Ports
 
@@ -22,7 +22,7 @@ If you wish to preload vocabulary from Athena, you may mount a volume to the con
 Athena can be accessed at [https://athena.ohdsi.org/].
 
 
-## Example Deployment using Compose
+## Deployment using Compose
 The `docker-compose.yml` provides for an example and quick deployment setting the environment variables.
 
 ```
@@ -41,3 +41,26 @@ services:
 ```
 
 For this deployment, constraint scripts will be ran and the local environment's `./vocab` folder (from the context of the build directory containing the `docker-compose.yml`) will be mapped to the `/VOCAB` folder inside of the container. If the folder contains Vocabularly CSVs from Athena, they will be loaded on database start.
+
+## Deployment using Docker Build and Docker Run
+
+To run the image outside of a compose, you will first need to build the image using `docker build` and then run it using `docker run`. As all of the environment variables and mounted vocabulary (if any) should be provided at run time, you will be providing these in the `docker run` step.
+
+To begin, you will need to have this project cloned, and then build from within the project directory using the following command:
+```
+docker build -t omop54 .
+```
+
+This will tag the image (`-t`) as "omop54" and provide `.` (the current directory) as the build context.
+
+From there you may execute the run step, passing in desired arguments. As mentioned previously, the `POSTGRES_PASSWORD` is required to be set by the base Postgres image.
+
+The following version of the `docker run` command will provide everything, using the built image. We will break this down in a moment.
+```
+docker run -e POSTGRES_PASSWORD=password -e CONSTRAINTS=true -v /path/to/your/vocab:/VOCAB omop54
+```
+To begin, please note that each environment variable must be set individually. That is, a separate `-e` flag for both `POSTGRES_PASSWORD` and `CONSTRAINTS`. If you do not with to run with constraints enabled, you may omit this variable entirely or set it to any other value (e.g. "false").
+
+The `-v` flag provides volume mounting from your host system into the container to provide your Athena vocabulary files if you wish to use them. If you do not wish to load vocabulary, you may omit this entire argument. Note that this requires the use of the full absolute path to your host system's directory containing your vocabulary. (Hint: The `pwd` command in a linux terminal will give you your current full path.) The directory inside the container is read by the script statically and it **must** be set to `/VOCAB`.
+
+Lastly, the image we previously built, which was tagged "omop54", is specified.
