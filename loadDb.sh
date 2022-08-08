@@ -29,7 +29,7 @@ fi
 
 # Step 3 - If constraints are enabled, set constraints.
 if [[ $CONSTRAINTS = "true" ]]; then
-echo -e "${INFO}INFO  -- ${DEFAULT}CONSTRAINTS equal true, building tables with constraints."
+echo -e "${INFO}INFO  -- ${DEFAULT}CONSTRAINTS equals 'true', building tables with constraints."
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
     \c omop54
     \i /scripts/OMOPCDM_postgresql_5.4_primary_keys.sql
@@ -40,3 +40,15 @@ else
 echo -e "${INFO}INFO  -- ${DEFAULT}CONSTRAINTS does not equal 'true', skipping setting constraints."
 fi
 
+# Step 4 - If OMOP on FHIR is enabled, create F tables.
+if [[ $OMOP_ON_FHIR = "true" ]]; then
+echo -e "${INFO}INFO  -- ${DEFAULT}OMOP_ON_FHIR equals 'true', building FHIR tables."
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
+    \c omop54
+    \i /omoponfhir/omoponfhir_f_person_ddl.txt
+    \i /omoponfhir/omoponfhir_v5.2_f_immunization_view_ddl.txt
+    \i /omoponfhir/omoponfhir_v5.3_f_observation_view_ddl.txt
+EOSQL
+else
+echo -e "${INFO}INFO  -- ${DEFAULT}OMOP_ON_FHIR does not equal 'true', FHIR tables have not been built."
+fi

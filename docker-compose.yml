@@ -8,5 +8,6 @@ services:
     environment:
       - POSTGRES_PASSWORD=password
       - CONSTRAINTS=false
+      - OMOP_ON_FHIR=true
     volumes:
       - ./vocab:/VOCAB
