@@ -21,6 +21,8 @@ If you wish to preload vocabulary from Athena, you may mount a volume to the con
 
 Athena can be accessed at [https://athena.ohdsi.org/].
 
+## OMOP on FHIR
+In addition to the core OMOP CDM tables, users may opt to include extended tables and views needed to support an OMOP-on-FHIR server. For more information on OMOP-on-FHIR, please visit https://github.com/omoponfhir/omoponfhir-site-n-docs/wiki.
 
 ## Deployment using Compose
 The `docker-compose.yml` provides for an example and quick deployment setting the environment variables.
@@ -36,6 +38,7 @@ services:
     environment:
       - POSTGRES_PASSWORD=password
       - CONSTRAINTS=true
+      - OMOP_ON_FHIR=false
     volumes:
       - ./vocab:/VOCAB
 ```

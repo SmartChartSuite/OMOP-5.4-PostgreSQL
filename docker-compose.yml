@@ -7,7 +7,7 @@ services:
       - "5432:5432"
     environment:
       - POSTGRES_PASSWORD=password
-      - CONSTRAINTS=false
-      - OMOP_ON_FHIR=true
+      - CONSTRAINTS=true
+      - OMOP_ON_FHIR=false
     volumes:
       - ./vocab:/VOCAB
