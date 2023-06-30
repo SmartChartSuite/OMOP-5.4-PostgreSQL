@@ -1,6 +1,8 @@
 create table f_person
 (
-    person_id          integer not null,
+    person_id          integer not null
+	constraint f_person_pk
+		primary key,
     family_name        varchar(255),
     given1_name        varchar(255),
     given2_name        varchar(255),

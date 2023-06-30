@@ -1,0 +1,10 @@
+create table f_cache
+(
+    cache_id   integer not null
+        constraint f_cache_pk
+            primary key,
+    key_text   text    not null,
+    value_text text,
+    value_int  integer,
+    status     integer default '-1'::integer
+);

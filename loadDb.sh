@@ -46,8 +46,9 @@ echo -e "${INFO}INFO  -- ${DEFAULT}OMOP_ON_FHIR equals 'true', building FHIR tab
 psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
     \c omop54
     \i /omoponfhir/omoponfhir_f_person_ddl.txt
+    \i /omoponfhir/omoponfhir_f_cache_ddl.txt
     \i /omoponfhir/omoponfhir_v5.2_f_immunization_view_ddl.txt
-    \i /omoponfhir/omoponfhir_v5.3_f_observation_view_ddl.txt
+    \i /omoponfhir/omoponfhir_v5.4_f_observation_view_ddl.txt
 EOSQL
 else
 echo -e "${INFO}INFO  -- ${DEFAULT}OMOP_ON_FHIR does not equal 'true', FHIR tables have not been built."

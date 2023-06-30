@@ -11,11 +11,15 @@ create view f_observation_view
              range_high,
              provider_id,
              visit_occurrence_id,
+             visit_detail_id,
              observation_source_value,
              observation_source_concept_id,
              unit_source_value,
+             qualifier_source_value,
+             unit_source_concept_id,
              value_source_value,
-             qualifier_source_value)
+             observation_event_id,
+             obs_event_field_concept_id)
 as
 
 SELECT measurement.measurement_id                AS observation_id,
@@ -35,34 +39,43 @@ SELECT measurement.measurement_id                AS observation_id,
        measurement.range_high,
        measurement.provider_id,
        measurement.visit_occurrence_id,
+       measurement.visit_detail_id,
        measurement.measurement_source_value      AS observation_source_value,
        measurement.measurement_source_concept_id AS observation_source_concept_id,
        measurement.unit_source_value,
+       NULL                                      AS qualifier_source_value,
+       measurement.unit_source_concept_id,
        measurement.value_source_value,
-       NULL                                      AS qualifier_source_value
+       measurement.measurement_event_id          AS observation_event_id,
+       measurement.meas_event_field_concept_id   AS obs_event_field_concept_id
+       
 FROM measurement
 UNION ALL
-SELECT (-observation.observation_id) AS observation_id,
+SELECT (-observation.observation_id)             AS observation_id,
        observation.person_id,
        observation.observation_concept_id,
        observation.observation_date,
        observation.observation_datetime,
-       NULL                          AS observation_time,
+       NULL                                      AS observation_time,
        observation.observation_type_concept_id,
-       NULL                          AS observation_operator_concept_id,
+       NULL                                      AS observation_operator_concept_id,
        observation.value_as_number,
        observation.value_as_string,
        observation.value_as_concept_id,
        observation.qualifier_concept_id,
        observation.unit_concept_id,
-       NULL                          AS range_low,
-       NULL                          AS range_high,
+       NULL                                      AS range_low,
+       NULL                                      AS range_high,
        observation.provider_id,
        observation.visit_occurrence_id,
+       observation.visit_detail_id,
        observation.observation_source_value,
        observation.observation_source_concept_id,
        observation.unit_source_value,
-       NULL                          AS value_source_value,
-       observation.qualifier_source_value
+       observation.qualifier_source_value,
+       NULL                                      AS unit_source_concept_id,
+       observation.value_source_value,
+       observation.observation_event_id,
+       observation.obs_event_field_concept_id
 FROM observation
 ;
