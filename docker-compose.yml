@@ -1,13 +1,41 @@
 version: "3.9"
+name: auh_pg
 
 services:
   omop54:
     build: .
+    container_name: auh_cdm  # this becomes the local server to refer to
     ports:
-      - "5432:5432"
+      - "5435:5432"
     environment:
       - POSTGRES_PASSWORD=password
-      - CONSTRAINTS=true
+      - LOAD_VOBABULARY=true
+      - CONSTRAINTS=false
       - OMOP_ON_FHIR=false
+      - CREATE_RESULTS_SCHEMA=true
     volumes:
-      - ./vocab:/VOCAB
+      # loadDb.sh only runs if this is set!
+      # actually: anything inside the docker-entrypoint... will trigger the
+      # message "PostgreSQL Database directory appears to contain a database;
+      # Skipping initialization" and so results schema-initialisation has to
+      # work in one shot!      
+      - /Users/cjb/data/omop-cdm/vocabulary_athena_20230714:/VOCAB
+
+      # uncomment to have a local db (persistent, but slower)
+      # remember to delete existing image & rebuild!
+      # docker compose build --no-cache
+      # docker compose up -d
+      # docker compose down --volumes 
+      - /Users/cjb/data/omop-cdm/db:/var/lib/postgresql/data
+
+    command: "postgres -c stats_temp_directory=/tmp"
+    networks:
+      - broadsea_bridge-network 
+
+# NB! this is now set up to use a network set up by another compose-process
+# (namely that spun up by the Broadsea-distro)
+# To try out the psql-database alone, comment out all keys referring to
+# networks (both above and below) before bringing the container up.
+networks:
+  broadsea_bridge-network:
+    external: true
